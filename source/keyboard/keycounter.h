@@ -1,3 +1,4 @@
+#include <windows.h>
 #include <QMap>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
@@ -16,8 +17,12 @@ private:
     void filter();
     void exportFile();
 
+    static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
+    void setKeyboardHook();
+    void removeKeyboardHook();
+
 private:
-    QMap<Qt::Key, unsigned int> key_map_;
+    inline static QMap<DWORD, unsigned int> key_map_;
     struct
     {
         QPushButton* pie_btn = nullptr;
@@ -27,4 +32,6 @@ private:
         QPushButton* line_btn = nullptr;
         QPushButton* percent_bar_btn = nullptr;
     } ui_;
+
+    inline static HHOOK keyboardHook = nullptr;
 };

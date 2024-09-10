@@ -11,6 +11,12 @@ MainPanel::MainPanel(QWidget* parent) : QMainWindow(parent)
 {
     initUi();
     initTrayIcon();
+    runBackground();
+}
+
+MainPanel::~MainPanel()
+{
+    delete key_counter_;
 }
 
 void MainPanel::initUi()
@@ -52,10 +58,15 @@ void MainPanel::signalConnect()
 {
 }
 
+void MainPanel::runBackground()
+{
+    key_counter_ = new KeyCounter();
+    key_counter_->hide();
+}
+
 void MainPanel::showKeyCounter()
 {
-    auto key_counter = new KeyCounter();
-    key_counter->show();
+    key_counter_->show();
 }
 
 void MainPanel::changeEvent(QEvent* event)

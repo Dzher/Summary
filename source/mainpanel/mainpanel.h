@@ -13,6 +13,7 @@ private:
     void initUi();
     void initTrayIcon();
     void signalConnect();
+    void showKeyCounter();
 
 protected:
     void changeEvent(QEvent* event) override;

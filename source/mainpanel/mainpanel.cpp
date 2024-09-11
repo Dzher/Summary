@@ -1,8 +1,10 @@
 #include "mainpanel.h"
+#include <qmessagebox.h>
 
 #include <QtCore/QEvent>
 #include <QtCore/QTimer>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QStyle>
 
 #include "../keyboard/keycounter.h"
@@ -81,4 +83,19 @@ void MainPanel::changeEvent(QEvent* event)
         }
     }
     QMainWindow::changeEvent(event);
+}
+
+void MainPanel::closeEvent(QCloseEvent* event)
+{
+    QMessageBox::StandardButton result =
+        QMessageBox::question(this, "Warning", "Are you sure you want out?\nClick 'Yes' to exit and 'No' to hide.");
+    if (QMessageBox::StandardButton::No == result)
+    {
+        hide();
+        event->ignore();
+    }
+    else
+    {
+        QMainWindow::closeEvent(event);
+    }
 }

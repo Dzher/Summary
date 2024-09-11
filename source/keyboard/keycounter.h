@@ -1,6 +1,7 @@
 #ifndef _SUMMARY_KEY_COUNTER_H_
 #define _SUMMARY_KEY_COUNTER_H_
 
+#include <qevent.h>
 #include <windows.h>
 #include <QMap>
 #include <QtWidgets/QPushButton>
@@ -26,6 +27,9 @@ private:
     void setKeyboardHook();
     void removeKeyboardHook();
     QString vkCode2String(DWORD key, bool remove_prefix = true);
+
+protected:
+    void closeEvent(QCloseEvent* event) override;
 
 private:
     inline static QMap<DWORD, unsigned int> key_map_;

@@ -24,6 +24,12 @@ KeyCounter::~KeyCounter()
     removeKeyboardHook();
 }
 
+void KeyCounter::closeEvent(QCloseEvent* event)
+{
+    hide();
+    event->ignore();
+}
+
 void KeyCounter::initUi()
 {
     setWindowTitle("Keyboard Counter");

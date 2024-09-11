@@ -1,3 +1,6 @@
+#ifndef _SUMMARY_KEY_COUNTER_H_
+#define _SUMMARY_KEY_COUNTER_H_
+
 #include <windows.h>
 #include <QMap>
 #include <QtWidgets/QPushButton>
@@ -16,10 +19,13 @@ private:
     void showBarChart();
     void filter();
     void exportFile();
+    void startLog(int minutes);
+    void writeLog(const std::string& filename);
 
     static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
     void setKeyboardHook();
     void removeKeyboardHook();
+    QString vkCode2String(DWORD key, bool remove_prefix = true);
 
 private:
     inline static QMap<DWORD, unsigned int> key_map_;
@@ -35,3 +41,5 @@ private:
 
     inline static HHOOK keyboardHook = nullptr;
 };
+
+#endif

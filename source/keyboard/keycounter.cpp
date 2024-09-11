@@ -2,20 +2,25 @@
 #include <QDebug>
 #include <QGridLayout>
 #include <QKeyEvent>
+#include <chrono>
+#include <cstring>
+#include <sstream>
+#include <thread>
+#include "../utils/logger.h"
 
 KeyCounter::KeyCounter(QWidget* parent) : QWidget(parent)
 {
     initUi();
     setKeyboardHook();
+    // TODO: ues config replace the magic number 10.
+    std::thread timerThread([this]() { startLog(10); });
+    timerThread.detach();
 }
 
 KeyCounter::~KeyCounter()
 {
-    qDebug() << "Keyboard Summary";
-    for (auto it = key_map_.begin(); it != key_map_.end(); ++it)
-    {
-        qDebug() << it.key() << " " << it.value();
-    }
+    std::string filename = utils::Logger::getCurrentDate() + ".txt";
+    writeLog(filename);
     removeKeyboardHook();
 }
 
@@ -72,6 +77,25 @@ void KeyCounter::removeKeyboardHook()
     }
 }
 
+QString KeyCounter::vkCode2String(DWORD key, bool remove_prefix)
+{
+    LONG lParam = MapVirtualKeyA(key, MAPVK_VK_TO_VSC) << 16;
+    char key_name[128];
+    int result = GetKeyNameTextA(lParam, key_name, sizeof(key_name));
+
+    if (!result)
+    {
+        return {};
+    }
+
+    QString key_str{key_name};
+    if (remove_prefix)
+    {
+        key_str.remove(0, 3);
+    }
+    return key_str;
+}
+
 void KeyCounter::signalConnect()
 {
 }
@@ -90,4 +114,24 @@ void KeyCounter::filter()
 
 void KeyCounter::exportFile()
 {
+}
+
+void KeyCounter::writeLog(const std::string& filename)
+{
+    std::ostringstream key_count_lines{};
+    for (auto it = key_map_.begin(); it != key_map_.end(); ++it)
+    {
+        key_count_lines << it.key() << "," << it.value() << std::endl;
+    }
+    utils::Logger::log(filename, key_count_lines.str(), utils::LogMethod::Replace);
+}
+
+void KeyCounter::startLog(int minutes)
+{
+    std::string filename = utils::Logger::getCurrentDate() + ".txt";
+    while (true)
+    {
+        std::this_thread::sleep_for(std::chrono::minutes(minutes));
+        writeLog(filename);
+    }
 }

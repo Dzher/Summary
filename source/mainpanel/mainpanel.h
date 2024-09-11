@@ -1,3 +1,6 @@
+#ifndef _SUMMARY_MAIN_PANEL_H_
+#define _SUMMARY_MAIN_PANEL_H_
+
 #include <QtWidgets/qwidget.h>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
@@ -30,3 +33,5 @@ private:
     } ui_;
     KeyCounter* key_counter_ = nullptr;
 };
+
+#endif

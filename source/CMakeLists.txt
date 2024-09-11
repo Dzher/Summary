@@ -4,6 +4,8 @@ set(PRIVATE_SOURCE
     mainpanel/mainpanel.h
     keyboard/keycounter.cpp
     keyboard/keycounter.h
+    utils/logger.cpp
+    utils/logger.h
     main.cpp
 )
 

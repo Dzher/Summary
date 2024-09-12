@@ -19,7 +19,7 @@ KeyCounter::KeyCounter(QWidget* parent) : QWidget(parent)
     initUi();
     setKeyboardHook();
     signalConnect();
-    
+
     // TODO: ues config replace the magic number 10.
     std::thread timerThread([this]() { startLog(10); });
     timerThread.detach();
@@ -106,25 +106,6 @@ void KeyCounter::removeKeyboardHook()
         UnhookWindowsHookEx(keyboardHook);
         keyboardHook = nullptr;
     }
-}
-
-QString KeyCounter::vkCode2String(DWORD key, bool remove_prefix)
-{
-    LONG lParam = MapVirtualKeyA(key, MAPVK_VK_TO_VSC) << 16;
-    char key_name[128];
-    int result = GetKeyNameTextA(lParam, key_name, sizeof(key_name));
-
-    if (!result)
-    {
-        return {};
-    }
-
-    QString key_str{key_name};
-    if (remove_prefix)
-    {
-        key_str.remove(0, 3);
-    }
-    return key_str;
 }
 
 void KeyCounter::signalConnect()

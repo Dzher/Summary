@@ -1,6 +1,7 @@
 #ifndef _SUMMARY_KEY_COUNTER_BARCHART_DLG_H_
 #define _SUMMARY_KEY_COUNTER_BARCHART_DLG_H_
 
+#include <qbarset.h>
 #include <QMap>
 #include <QtCharts>
 #include <QtWidgets/QTabWidget>
@@ -18,17 +19,45 @@ public:
 
 private:
     void initUi();
-    void initData();
+    // void initChartSet(int index);
+    void initAllChartSet();
+    void initAlphaChartSet();
+    void initNumericChartSet();
+    void initFuncChartSet();
+    void initNavigationChartSet();
+    void initSymbolChartSet();
+    void initControlChartSet();
+    void initSystemChartSet();
+    void initEditChartSet();
+    void initOtherChartSet();
     void signalConnect();
+
     // TODO: support previous date later
-    void showBarChart(KeyZone key_type);
+    void showBarChart(int index);
+    void showAllChart();
+    void showAlphaChart();
+    void showNumericChart();
+    void showFuncChart();
+    void showNavigationChart();
+    void showSymbolChart();
+    void showControlChart();
+    void showSystemChart();
+    void showEditChart();
+    void showOtherChart();
 
 private:
-    struct
-    {
-        QTabWidget* bar_tab_ = nullptr;
-    } ui_;
-    QMap<KeyZone, QPair<DWORD, unsigned int>> bar_data_;
+    QTabWidget* bar_tab_ = nullptr;
+    // TODO: maybe enhence this
+    QMap<KeyZone, QBarSet*> AllBarData_;
+    QMap<QString, QBarSet*> AlphaBarData_;
+    QMap<QString, QBarSet*> NumericBarData_;
+    QMap<QString, QBarSet*> FuncBarData_;
+    QMap<QString, QBarSet*> NavigationBarData_;
+    QMap<QString, QBarSet*> SymbolBarData_;
+    QMap<QString, QBarSet*> ControlBarData_;
+    QMap<QString, QBarSet*> SystemBarData_;
+    QMap<QString, QBarSet*> EditBarData_;
+    QMap<QString, QBarSet*> OtherBarData_;
 };
 } // namespace keyboard
 

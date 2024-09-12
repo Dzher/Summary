@@ -35,7 +35,6 @@ private:
     static LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam);
     void setKeyboardHook();
     void removeKeyboardHook();
-    QString vkCode2String(DWORD key, bool remove_prefix = true);
 
 protected:
     void closeEvent(QCloseEvent* event) override;

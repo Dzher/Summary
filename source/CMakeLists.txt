@@ -12,6 +12,7 @@ set(KEYBOARD_COUNTER
     keyboard/keycounter.h
     keyboard/barchartdlg.cpp
     keyboard/barchartdlg.h
+    keyboard/keytype.cpp
     keyboard/keytype.h
 )
 

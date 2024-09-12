@@ -1,19 +1,25 @@
 
-set(PRIVATE_SOURCE
+set(MAIN_PANEL
     mainpanel/mainpanel.cpp
     mainpanel/mainpanel.h
-    keyboard/keycounter.cpp
-    keyboard/keycounter.h
     utils/logger.cpp
     utils/logger.h
     main.cpp
 )
 
-qt5_wrap_cpp(MOC_FILES 
-    mainpanel/mainpanel.cpp
-    mainpanel/mainpanel.h
+set(KEYBOARD_COUNTER
     keyboard/keycounter.cpp
     keyboard/keycounter.h
+    keyboard/barchartdlg.cpp
+    keyboard/barchartdlg.h
+    keyboard/keytype.h
 )
-add_executable(Summary ${PRIVATE_SOURCE} ${MOC_FILES})
+
+qt5_wrap_cpp(KEYBOARD_COUNTER_MOC_FILES ${KEYBOARD_COUNTER})
+
+qt5_wrap_cpp(MAIN_PANEL_MOC_FILES 
+    mainpanel/mainpanel.cpp
+    mainpanel/mainpanel.h
+)
+add_executable(Summary ${MAIN_PANEL} ${KEYBOARD_COUNTER} ${KEYBOARD_COUNTER_MOC_FILES} ${MAIN_PANEL_MOC_FILES})
 target_link_libraries(Summary Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Charts)

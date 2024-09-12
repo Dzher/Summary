@@ -7,17 +7,26 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
 
+namespace keyboard
+{
+using KeyboardData = QMap<DWORD, unsigned int>;
 class KeyCounter : public QWidget
 {
 public:
     KeyCounter(QWidget* parent = nullptr);
     ~KeyCounter();
 
+    static KeyboardData getData();
+
 private:
     void initUi();
     void signalConnect();
     void showPieChart();
     void showBarChart();
+    void showCloudChart();
+    void showDotChart();
+    void showLineChart();
+    void showPercentChart();
     void filter();
     void exportFile();
     void startLog(int minutes);
@@ -32,7 +41,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 private:
-    inline static QMap<DWORD, unsigned int> key_map_;
+    inline static KeyboardData key_map_;
     struct
     {
         QPushButton* pie_btn = nullptr;
@@ -45,5 +54,6 @@ private:
 
     inline static HHOOK keyboardHook = nullptr;
 };
+} // namespace keyboard
 
 #endif

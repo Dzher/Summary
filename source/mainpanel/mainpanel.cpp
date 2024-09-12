@@ -62,7 +62,7 @@ void MainPanel::signalConnect()
 
 void MainPanel::runBackground()
 {
-    key_counter_ = new KeyCounter();
+    key_counter_ = new keyboard::KeyCounter();
     key_counter_->hide();
 }
 

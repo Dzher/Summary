@@ -6,7 +6,11 @@
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QSystemTrayIcon>
 
+namespace keyboard
+{
 class KeyCounter;
+}
+
 class MainPanel : public QMainWindow
 {
     Q_OBJECT
@@ -23,7 +27,7 @@ private:
 
 protected:
     void changeEvent(QEvent* event) override;
-     void closeEvent(QCloseEvent* event) override;
+    void closeEvent(QCloseEvent* event) override;
 
 private:
     struct
@@ -32,7 +36,7 @@ private:
         QSystemTrayIcon* tray_icon_ = nullptr;
         QMenu* tray_icon_menu_ = nullptr;
     } ui_;
-    KeyCounter* key_counter_ = nullptr;
+    keyboard::KeyCounter* key_counter_ = nullptr;
 };
 
 #endif

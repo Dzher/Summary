@@ -131,10 +131,10 @@ void KeyBarChartDlg::initAllChartSet()
     auto raw_data = KeyCounter::getData();
     for (auto it = raw_data.begin(); it != raw_data.end(); it++)
     {
-        auto bar_key = KeyboardUtils::vkCodeType(it.key());
+        KeyZone bar_key = KeyboardUtils::vkCodeType(it.key());
         if (!AllBarData_.contains(bar_key))
         {
-            QBarSet* each_set = new QBarSet(KeyboardUtils::vkCode2String(it.key()));
+            QBarSet* each_set = new QBarSet(KeyboardUtils::keyZone2String(bar_key));
             AllBarData_[bar_key] = each_set;
         }
         AllBarData_[bar_key]->replace(0, AllBarData_[bar_key]->at(0) + it.value());

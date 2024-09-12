@@ -46,6 +46,34 @@ KeyZone KeyboardUtils::vkCodeType(DWORD key_code)
     return KeyZone::Other;
 }
 
+QString KeyboardUtils::keyZone2String(KeyZone zone)
+{
+    switch (zone)
+    {
+        case KeyZone::AlphaZone:
+            return "Alpha";
+        case KeyZone::NumericZone:
+            return "Numeric";
+        case KeyZone::SymbolZone:
+            return "Symbol";
+        case KeyZone::FuncZone:
+            return "Function";
+        case KeyZone::NavigationZone:
+            return "Navigation";
+        case KeyZone::ControlZone:
+            return "Control";
+        case KeyZone::SystemZone:
+            return "System";
+        case KeyZone::EditZone:
+            return "Edit";
+        case KeyZone::keyPadZone:
+            return "Pad";
+        case KeyZone::Other:
+            return "Other";
+            break;
+    }
+}
+
 QString KeyboardUtils::vkCode2String(DWORD key, bool remove_prefix)
 {
     LONG lParam = MapVirtualKeyA(key, MAPVK_VK_TO_VSC) << 16;

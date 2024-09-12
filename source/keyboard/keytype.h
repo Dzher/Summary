@@ -25,6 +25,7 @@ class KeyboardUtils
 {
 public:
     static KeyZone vkCodeType(DWORD key_code);
+    static QString keyZone2String(KeyZone zone);
     static QString vkCode2String(DWORD key, bool remove_prefix = true);
 };
 } // namespace keyboard

@@ -67,6 +67,7 @@ void KeyBarChartDlg::showAllChart()
     series->attachAxis(axis_x);
 
     QValueAxis* axis_y = new QValueAxis();
+    axis_y->setRange(0, 100);
     chart->addAxis(axis_y, Qt::AlignLeft);
     series->attachAxis(axis_y);
     chart->legend()->setVisible(true);

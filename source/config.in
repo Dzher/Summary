@@ -1,1 +1,2 @@
 #define RESOURCE_ROOT "@CMAKE_SOURCE_DIR@/resource"
+#define SUMMARY_CONFIG_PATH "@CMAKE_SOURCE_DIR@/build/summary_config/"

@@ -20,9 +20,9 @@ enum class ResourceType
 class PathHelper
 {
 public:
-    static QString getResourcePath(ResourceType type, const QString& file_name, const QString& group = "");
+    static QString getResourcePath(ResourceType type, const QString& file_name = "", const QString& group = "");
     static QString getImagePath(const QString& file_name, const QString& group);
-    static QString getConfigPath(const QString& file_name);
+    static QString getConfigPath();
     static QString getThemePath(const QString& file_name);
     static QString getFontPath(const QString& file_name);
     static QString getMessagePath(const QString& file_name);

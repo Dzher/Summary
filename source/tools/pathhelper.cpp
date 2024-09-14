@@ -4,6 +4,8 @@
 #include <iostream>
 
 #include "config.h"
+#include "confighelper.h"
+
 
 using namespace tools;
 
@@ -25,7 +27,7 @@ QString PathHelper::getResourcePath(ResourceType type, const QString& file_name,
             }
             break;
         case ResourceType::Config:
-            resource_path = QString("%1/config/%2").arg(resource_path).arg(file_name);
+            resource_path = QString::fromStdString(ConfigHelper::getOrCreateConfigFile());
             break;
         case ResourceType::Theme:
             resource_path = QString("%1/theme/%2").arg(resource_path).arg(file_name);
@@ -68,9 +70,9 @@ QString PathHelper::getImagePath(const QString& file_name, const QString& group)
     return getResourcePath(ResourceType::Image, file_name, group);
 }
 
-QString PathHelper::getConfigPath(const QString& file_name)
+QString PathHelper::getConfigPath()
 {
-    return getResourcePath(ResourceType::Config, file_name);
+    return getResourcePath(ResourceType::Config);
 }
 
 QString PathHelper::getThemePath(const QString& file_name)

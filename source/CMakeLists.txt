@@ -8,6 +8,8 @@ set(MAIN_PANEL
 set(SUMMARY_TOOLS
     tools/pathhelper.cpp
     tools/pathhelper.h
+    tools/confighelper.cpp
+    tools/confighelper.h
     utils/logger.cpp
     utils/logger.h
 )

@@ -8,11 +8,16 @@
 #include <QtWidgets/QStyle>
 
 #include "../keyboard/keycounter.h"
+#include "../tools/confighelper.h"
 
 MainPanel::MainPanel(QWidget* parent) : QMainWindow(parent)
 {
     initUi();
     initTrayIcon();
+    if (!tools::ConfigHelper::existConfigFile())
+    {
+        tools::ConfigHelper::initConfigFile();
+    }
     runBackground();
 }
 

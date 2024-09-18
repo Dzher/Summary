@@ -59,7 +59,7 @@ bool Logger::appendFile(const std::string& filename, const std::string& content)
 
 bool Logger::updateFile(const std::string& filename, const std::string& content)
 {
-    // TODO：Complete this later
+    // TODO: Complete this later
     std::ofstream file(filename, std::ios_base::app);
     if (file.is_open())
     {

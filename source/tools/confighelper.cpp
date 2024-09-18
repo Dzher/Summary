@@ -1,7 +1,9 @@
 #include "confighelper.h"
-#include "toml.hpp"
 
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include "toml.hpp"
 
 using namespace tools;
 
@@ -15,6 +17,8 @@ void ConfigHelper::setSetting(const std::string& key, const std::string& value)
 
     toml::table config = toml::parse_file(config_file);
     config.insert_or_assign(key, value);
+
+    saveConfigFile(config);
 }
 
 void ConfigHelper::setSetting(const std::string& key, const int value)
@@ -27,6 +31,8 @@ void ConfigHelper::setSetting(const std::string& key, const int value)
 
     toml::table config = toml::parse_file(config_file);
     config.insert_or_assign(key, value);
+
+    saveConfigFile(config);
 }
 
 void ConfigHelper::setSetting(const std::string& key, const double value)
@@ -39,6 +45,8 @@ void ConfigHelper::setSetting(const std::string& key, const double value)
 
     toml::table config = toml::parse_file(config_file);
     config.insert_or_assign(key, value);
+
+    saveConfigFile(config);
 }
 
 std::string ConfigHelper::getSetting(const std::string& key)
@@ -65,17 +73,21 @@ bool ConfigHelper::existSetting(const std::string& key)
     return config.contains(key);
 }
 
+bool ConfigHelper::existConfigFile()
+{
+    auto config_file_path = std::string(kSummaryConfigPath) + kSummaryConfigFile;
+    return std::filesystem::exists(config_file_path);
+}
+
 std::string ConfigHelper::getOrCreateConfigFile()
 {
-    auto config_file = std::string(kSummaryConfigPath) + kSummaryConfigFile;
-    if (!std::filesystem::exists(config_file))
+    auto config_file_path = std::string(kSummaryConfigPath) + kSummaryConfigFile;
+    if (!std::filesystem::exists(config_file_path))
     {
-        if (std::filesystem::create_directory(config_file))
-        {
-            return config_file;
-        }
+        std::filesystem::create_directories(kSummaryConfigPath);
+        std::ofstream config_file(config_file_path, std::ios::out | std::ios::trunc);
     }
-    return config_file;
+    return config_file_path;
 }
 
 std::string ConfigHelper::generateKeyPath(std::list<std::string> key_list)
@@ -90,4 +102,45 @@ std::string ConfigHelper::generateKeyPath(std::list<std::string> key_list)
         }
     }
     return key_path;
+}
+
+void ConfigHelper::initConfigFile()
+{
+    auto config_tbl = toml::table{
+        {"author",
+         toml::table{
+             {"name", "Dzher"},
+             {"github", "https://github.com/Dzher"},
+         }},
+        {kSummary,
+         toml::table{
+             {"config", "Default Configuration"},
+             {"repo", "https://github.com/Dzher/Summary"},
+             {"version", "0.0.1"},
+         }},
+        {kMainPanel,
+         toml::table{
+             {kGeomtrySize, ""},
+             {kRunBackground, true},
+         }},
+        {kKeyCounter,
+         toml::table{
+             {kGeomtrySize, ""},
+             {kLogFilePath, "../keycounter/logs/"},
+             {kLogFileSize, 100},
+             {kRunBackground, true},
+         }},
+    };
+
+    saveConfigFile(config_tbl);
+}
+
+void ConfigHelper::saveConfigFile(const toml::table& config_tbl)
+{
+    std::ofstream config_file(getOrCreateConfigFile(), std::ios::out | std::ios::trunc);
+    // TODO: consider multi threads write issue.
+    // std::lock_guard<mutex_>
+    config_file << toml::toml_formatter(config_tbl, toml::format_flags::none);
+    config_file.flush();
+    config_file.close();
 }

@@ -20,6 +20,7 @@ public:
 
 private:
     void initUi();
+    void loadData();
     void signalConnect();
     void showPieChart();
     void showBarChart();
@@ -29,6 +30,8 @@ private:
     void showPercentChart();
     void filter();
     void exportFile();
+    
+    std::string getLogFolder();
     void startLog(int minutes);
     void writeLog(const std::string& filename);
 

@@ -58,7 +58,7 @@ std::string ConfigHelper::getSetting(const std::string& key)
     }
 
     toml::table config = toml::parse_file(config_file);
-    return config.at_path(key).value_or("");
+    return config.at_path(key).value<std::string>().value_or("");
 }
 
 bool ConfigHelper::existSetting(const std::string& key)
@@ -96,7 +96,7 @@ std::string ConfigHelper::generateKeyPath(std::list<std::string> key_list)
     for (auto& key : key_list)
     {
         key_path += key;
-        if (key != *key_list.end())
+        if (key != *(--key_list.end()))
         {
             key_path += '.';
         }
@@ -128,6 +128,7 @@ void ConfigHelper::initConfigFile()
              {kGeomtrySize, ""},
              {kLogFilePath, "../keycounter/logs/"},
              {kLogFileSize, 100},
+             {kLogFileFrequency, 5},
              {kRunBackground, true},
          }},
     };

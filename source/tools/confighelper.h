@@ -29,10 +29,9 @@ public:
 
 private:
     static std::string getOrCreateConfigFile();
-
     static void saveConfigFile(const toml::table& config_tbl);
 
-private:
+public:
     static constexpr std::string_view kSummaryConfigPath{SUMMARY_CONFIG_PATH};
     static constexpr std::string kSummaryConfigFile{"summary.toml"};
 
@@ -45,6 +44,7 @@ private:
     static constexpr std::string kGeomtrySize{"geomtry"};
     static constexpr std::string kLogFilePath{"logFilePath"};
     static constexpr std::string kLogFileSize{"logFileSize"};
+    static constexpr std::string kLogFileFrequency{"logFileFrequency"};
     static constexpr std::string kRunBackground{"runbackground"};
 };
 } // namespace tools

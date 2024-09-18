@@ -1,14 +1,16 @@
 #include "keycounter.h"
-#include <qpushbutton.h>
-#include <winsock.h>
 #include <QDebug>
 #include <QGridLayout>
 #include <QKeyEvent>
 #include <chrono>
-#include <cstring>
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
 #include <thread>
 
+#include "../tools/confighelper.h"
 #include "../utils/logger.h"
 #include "barchartdlg.h"
 
@@ -20,14 +22,36 @@ KeyCounter::KeyCounter(QWidget* parent) : QWidget(parent)
     setKeyboardHook();
     signalConnect();
 
-    // TODO: ues config replace the magic number 10.
-    std::thread timerThread([this]() { startLog(10); });
-    timerThread.detach();
+    auto log_folder = getLogFolder();
+    if (log_folder.empty())
+    {
+        std::cerr << "Empty KeyCounter Log File Path" << std::endl;
+        return;
+    }
+    if (!std::filesystem::exists(log_folder))
+    {
+        std::filesystem::create_directories(log_folder);
+    }
+
+    loadData();
+
+    std::thread logger(
+        [this]()
+        {
+            using tools::ConfigHelper;
+            std::string log_freq_key =
+                ConfigHelper::generateKeyPath({ConfigHelper::kKeyCounter, ConfigHelper::kLogFileFrequency});
+            std::string value = ConfigHelper::getSetting(log_freq_key);
+
+            int freq = value.empty() ? 5 : std::stoi(value);
+            startLog(freq);
+        });
+    logger.detach();
 }
 
 KeyCounter::~KeyCounter()
 {
-    std::string filename = utils::Logger::getCurrentDate() + ".txt";
+    std::string filename = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
     writeLog(filename);
     removeKeyboardHook();
 }
@@ -81,6 +105,17 @@ void KeyCounter::initUi()
     main_lyt->addWidget(ui_.percent_bar_btn, 1, 2);
 
     setLayout(main_lyt);
+}
+
+void KeyCounter::loadData()
+{
+    std::string today_log = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
+    std::ifstream log_file(today_log, std::ios::in);
+    for (std::string each; std::getline(log_file, each);)
+    {
+        auto each_data = QString::fromStdString(each).split(',');
+        key_map_[each_data.front().toULong()] = each_data.back().toUInt();
+    }
 }
 
 LRESULT CALLBACK KeyCounter::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -164,10 +199,21 @@ void KeyCounter::writeLog(const std::string& filename)
 
 void KeyCounter::startLog(int minutes)
 {
-    std::string filename = utils::Logger::getCurrentDate() + ".txt";
+    if (minutes <= 0)
+    {
+        minutes = 5;
+    }
+    std::string filename = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
     while (true)
     {
         std::this_thread::sleep_for(std::chrono::minutes(minutes));
         writeLog(filename);
     }
+}
+
+std::string KeyCounter::getLogFolder()
+{
+    using tools::ConfigHelper;
+    std::string log_folder_key = ConfigHelper::generateKeyPath({ConfigHelper::kKeyCounter, ConfigHelper::kLogFilePath});
+    return ConfigHelper::getSetting(log_folder_key);
 }

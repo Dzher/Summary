@@ -34,7 +34,7 @@ KeyCounter::KeyCounter(QWidget* parent) : QWidget(parent)
         std::filesystem::create_directories(log_folder);
     }
 
-    loadData();
+    today_key_data_ = loadKeyData(utils::Timmer::getCurrentDate());
 
     std::thread logger(
         [this]()
@@ -57,9 +57,14 @@ KeyCounter::~KeyCounter()
     removeKeyboardHook();
 }
 
-KeyboardData KeyCounter::getData()
+KeyboardData KeyCounter::getKeyData(const std::string& date)
 {
-    return key_map_;
+    if (date.empty() || date == utils::Timmer::getCurrentDate())
+    {
+        return today_key_data_;
+    }
+
+    return loadKeyData(date);
 }
 
 void KeyCounter::closeEvent(QCloseEvent* event)
@@ -109,15 +114,18 @@ void KeyCounter::initUi()
     setLayout(main_lyt);
 }
 
-void KeyCounter::loadData()
+KeyboardData KeyCounter::loadKeyData(const std::string& date)
 {
-    std::string today_log = getLogFolder() + utils::Timmer::getCurrentDate() + ".txt";
+    std::string today_log = getLogFolder() + date + ".txt";
     std::ifstream log_file(today_log, std::ios::in);
+
+    KeyboardData key_data;
     for (std::string each; std::getline(log_file, each);)
     {
         auto each_data = QString::fromStdString(each).split(',');
-        key_map_[each_data.front().toULong()] = each_data.back().toUInt();
+        key_data[each_data.front().toULong()] = each_data.back().toUInt();
     }
+    return key_data;
 }
 
 LRESULT CALLBACK KeyCounter::KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
@@ -126,7 +134,7 @@ LRESULT CALLBACK KeyCounter::KeyboardProc(int nCode, WPARAM wParam, LPARAM lPara
     {
         KBDLLHOOKSTRUCT* kbdStruct = (KBDLLHOOKSTRUCT*)lParam;
         DWORD key = kbdStruct->vkCode;
-        key_map_[key]++;
+        today_key_data_[key]++;
     }
     return CallNextHookEx(keyboardHook, nCode, wParam, lParam);
 }
@@ -192,7 +200,7 @@ void KeyCounter::exportFile()
 void KeyCounter::writeLog(const std::string& filename)
 {
     std::ostringstream key_count_lines{};
-    for (auto it = key_map_.begin(); it != key_map_.end(); ++it)
+    for (auto it = today_key_data_.begin(); it != today_key_data_.end(); ++it)
     {
         key_count_lines << it.key() << "," << it.value() << std::endl;
     }

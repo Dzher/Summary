@@ -16,11 +16,11 @@ public:
     KeyCounter(QWidget* parent = nullptr);
     ~KeyCounter();
 
-    static KeyboardData getData();
+    static KeyboardData getKeyData(const std::string& date = "");
 
 private:
+    static KeyboardData loadKeyData(const std::string& date);
     void initUi();
-    void loadData();
     void signalConnect();
     void showPieChart();
     void showBarChart();
@@ -30,8 +30,8 @@ private:
     void showPercentChart();
     void filter();
     void exportFile();
-    
-    std::string getLogFolder();
+
+    static std::string getLogFolder();
     void startLog(int minutes);
     void writeLog(const std::string& filename);
 
@@ -43,7 +43,7 @@ protected:
     void closeEvent(QCloseEvent* event) override;
 
 private:
-    inline static KeyboardData key_map_;
+    inline static KeyboardData today_key_data_;
     struct
     {
         QPushButton* pie_btn = nullptr;

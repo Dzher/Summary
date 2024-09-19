@@ -14,7 +14,7 @@
 
 using namespace keyboard;
 
-KeyBarChartDlg::KeyBarChartDlg(QWidget* parent) : QDialog(parent)
+KeyBarChartDlg::KeyBarChartDlg(QWidget* parent) : QDialog(parent), maximize_(0)
 {
     initUi();
     signalConnect();
@@ -96,7 +96,7 @@ void KeyBarChartDlg::showAllChart()
 
     QBarCategoryAxis* axis_x = new QBarCategoryAxis();
     QStringList categories;
-    for (auto& each_x : utils::Timmer::getLastNDates(7))
+    for (auto& each_x : utils::Timmer::getLastNDates(kAWeek))
     {
         categories.append(QString::fromStdString(each_x));
     }
@@ -105,12 +105,12 @@ void KeyBarChartDlg::showAllChart()
     series->attachAxis(axis_x);
 
     QValueAxis* axis_y = new QValueAxis();
-    axis_y->setRange(0, 300);
+    axis_y->setRange(0, maximize_);
     chart->addAxis(axis_y, Qt::AlignLeft);
     series->attachAxis(axis_y);
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
-    
+
     QChartView* chart_view = new QChartView();
     chart_view->setChart(chart);
     chart_view->setRenderHint(QPainter::Antialiasing);
@@ -167,17 +167,40 @@ void KeyBarChartDlg::showBarChart(int index)
 
 void KeyBarChartDlg::initAllChartSet()
 {
-    auto raw_data = KeyCounter::getData();
-    for (auto it = raw_data.begin(); it != raw_data.end(); it++)
+    // init the data each time reopened
+    for (int zone = KeyZone::AlphaZone; zone <= KeyZone::Other; ++zone)
     {
-        KeyZone bar_key = KeyboardUtils::vkCodeType(it.key());
-        if (!AllBarData_.contains(bar_key))
+        auto key = static_cast<KeyZone>(zone);
+        if (AllBarData_[key])
         {
-            AllBarData_[bar_key] = new QBarSet(KeyboardUtils::keyZone2String(bar_key));
-            AllBarData_[bar_key]->append(it.value());
-            continue;
+            delete AllBarData_[key];
         }
-        AllBarData_[bar_key]->replace(0, AllBarData_[bar_key]->at(0) + it.value());
+        AllBarData_[key] = new QBarSet(KeyboardUtils::keyZone2String(key));
+    }
+    maximize_ = 0;
+
+    std::vector<std::string> week_list = utils::Timmer::getLastNDates(kAWeek);
+    for (int day_index = 0; day_index < week_list.size(); ++day_index)
+    {
+        KeyZone bar_key;
+        for (int zone = KeyZone::AlphaZone; zone <= KeyZone::Other; ++zone)
+        {
+            // the date's data is empty, or no exist the date's file
+            bar_key = static_cast<KeyZone>(zone);
+            AllBarData_[bar_key]->append(0);
+        }
+
+        KeyboardData day_data = KeyCounter::getKeyData(week_list[day_index]);
+        for (auto it = day_data.begin(); it != day_data.end(); it++)
+        {
+            bar_key = KeyboardUtils::vkCodeType(it.key());
+            QBarSet* barset = AllBarData_[bar_key];
+            barset->replace(day_index, barset->at(day_index) + it.value());
+            if (maximize_ < barset->at(day_index))
+            {
+                maximize_ = barset->at(day_index);
+            }
+        }
     }
 }
 

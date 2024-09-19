@@ -7,9 +7,9 @@
 
 namespace keyboard
 {
-enum class KeyZone
+enum KeyZone
 {
-    AlphaZone,
+    AlphaZone = 0,
     NumericZone,
     SymbolZone,
     FuncZone,

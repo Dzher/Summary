@@ -11,16 +11,16 @@ std::string Timmer::getCurrentDate()
     return formatDate(today);
 }
 
-std::list<std::string> Timmer::getLastNDates(int n)
+std::vector<std::string> Timmer::getLastNDates(int n)
 {
-    std::list<std::string> dates;
+    std::vector<std::string> dates;
 
     auto today = std::chrono::system_clock::now();
 
     for (int count = 0; count < n; ++count)
     {
         auto time_point = today - std::chrono::hours(24 * count);
-        dates.push_front(formatDate(time_point));
+        dates.insert(dates.begin(), formatDate(time_point));
     }
 
     return dates;

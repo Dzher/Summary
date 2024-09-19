@@ -60,6 +60,9 @@ private:
     QMap<QString, QBarSet*> SystemBarData_;
     QMap<QString, QBarSet*> EditBarData_;
     QMap<QString, QBarSet*> OtherBarData_;
+
+    static constexpr int kAWeek = 7;
+    int maximize_;
 };
 } // namespace keyboard
 

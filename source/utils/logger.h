@@ -1,7 +1,6 @@
 #ifndef _UTILS_LOGGER_H_
 #define _UTILS_LOGGER_H_
 
-#include <list>
 #include <string>
 
 namespace utils
@@ -18,7 +17,7 @@ class Timmer
 {
 public:
     static std::string getCurrentDate();
-    static std::list<std::string> getLastNDates(int n);
+    static std::vector<std::string> getLastNDates(int n);
 
 private:
     static std::string formatDate(const std::chrono::system_clock::time_point& time_point);

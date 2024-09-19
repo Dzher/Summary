@@ -1,9 +1,14 @@
 #include "barchartdlg.h"
-#include <qbarset.h>
-#include <qboxlayout.h>
-#include <qpair.h>
-#include <qtabwidget.h>
+
+#include <qglobal.h>
+#include <qpoint.h>
 #include <winsock.h>
+#include <QVBoxLayout>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QBarSet>
+#include <QtWidgets/QGraphicsSimpleTextItem>
+
+#include "../utils/logger.h"
 #include "keycounter.h"
 #include "keytype.h"
 
@@ -14,7 +19,7 @@ KeyBarChartDlg::KeyBarChartDlg(QWidget* parent) : QDialog(parent)
     initUi();
     signalConnect();
 
-    bar_tab_->setCurrentIndex(0);
+    showAllChart();
 }
 
 void KeyBarChartDlg::initUi()
@@ -44,35 +49,68 @@ void KeyBarChartDlg::signalConnect()
     connect(bar_tab_, &QTabWidget::currentChanged, this, [this](int index) { showBarChart(index); });
 }
 
+void KeyBarChartDlg::showDetailData(QChart* chart, QBarSeries* series, bool show)
+{
+    if (!chart || !series)
+    {
+        return;
+    }
+
+    if (not show)
+    {
+        return;
+    }
+
+    for (auto& barset : series->barSets())
+    {
+        for (int index = 0; index < barset->count(); ++index)
+        {
+            qreal value = barset->at(index);
+            // QPointF labelPosition = series->barRect(barset, index).topRight();
+            QPointF point = chart->mapToPosition(QPointF(index, value), series);
+
+            QGraphicsSimpleTextItem* label = new QGraphicsSimpleTextItem(QString::number(value));
+            label->setPos(point.x() - label->boundingRect().width() / 2, point.y() - label->boundingRect().height());
+
+            chart->scene()->addItem(label);
+        }
+    }
+}
+
 void KeyBarChartDlg::showAllChart()
 {
     initAllChartSet();
 
+    delete bar_tab_->widget(0)->layout();
+
     QBarSeries* series = new QBarSeries();
-    QStringList categories;
     for (auto it = AllBarData_.begin(); it != AllBarData_.end(); it++)
     {
         series->append(it.value());
-        categories.append(it.value()->label());
     }
 
     QChart* chart = new QChart();
-    chart->setTitle("Today's Keyboard Barchart");
+    chart->setTitle("Keyboard Barchart in a Week");
     chart->setAnimationOptions(QChart::SeriesAnimations);
     chart->addSeries(series);
 
     QBarCategoryAxis* axis_x = new QBarCategoryAxis();
+    QStringList categories;
+    for (auto& each_x : utils::Timmer::getLastNDates(7))
+    {
+        categories.append(QString::fromStdString(each_x));
+    }
     axis_x->append(categories);
     chart->addAxis(axis_x, Qt::AlignBottom);
     series->attachAxis(axis_x);
 
     QValueAxis* axis_y = new QValueAxis();
-    axis_y->setRange(0, 100);
+    axis_y->setRange(0, 300);
     chart->addAxis(axis_y, Qt::AlignLeft);
     series->attachAxis(axis_y);
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
-
+    
     QChartView* chart_view = new QChartView();
     chart_view->setChart(chart);
     chart_view->setRenderHint(QPainter::Antialiasing);
@@ -135,8 +173,9 @@ void KeyBarChartDlg::initAllChartSet()
         KeyZone bar_key = KeyboardUtils::vkCodeType(it.key());
         if (!AllBarData_.contains(bar_key))
         {
-            QBarSet* each_set = new QBarSet(KeyboardUtils::keyZone2String(bar_key));
-            AllBarData_[bar_key] = each_set;
+            AllBarData_[bar_key] = new QBarSet(KeyboardUtils::keyZone2String(bar_key));
+            AllBarData_[bar_key]->append(it.value());
+            continue;
         }
         AllBarData_[bar_key]->replace(0, AllBarData_[bar_key]->at(0) + it.value());
     }

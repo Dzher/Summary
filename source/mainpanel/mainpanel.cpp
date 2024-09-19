@@ -23,7 +23,6 @@ MainPanel::MainPanel(QWidget* parent) : QMainWindow(parent)
 
 MainPanel::~MainPanel()
 {
-    delete key_counter_;
 }
 
 void MainPanel::initUi()
@@ -67,7 +66,7 @@ void MainPanel::signalConnect()
 
 void MainPanel::runBackground()
 {
-    key_counter_ = new keyboard::KeyCounter();
+    key_counter_ = new keyboard::KeyCounter(this);
     key_counter_->hide();
 }
 

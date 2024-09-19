@@ -1,8 +1,9 @@
 #ifndef _SUMMARY_KEY_COUNTER_BARCHART_DLG_H_
 #define _SUMMARY_KEY_COUNTER_BARCHART_DLG_H_
 
-#include <qbarset.h>
 #include <QMap>
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QChart>
 #include <QtCharts>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QWidget>
@@ -16,6 +17,7 @@ class KeyBarChartDlg : public QDialog
     Q_OBJECT
 public:
     explicit KeyBarChartDlg(QWidget* parent = nullptr);
+    void showDetailData(QChart* chart, QBarSeries* series, bool show);
 
 private:
     void initUi();

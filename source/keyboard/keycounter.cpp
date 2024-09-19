@@ -1,4 +1,5 @@
 #include "keycounter.h"
+#include <qglobal.h>
 #include <QDebug>
 #include <QGridLayout>
 #include <QKeyEvent>
@@ -51,7 +52,7 @@ KeyCounter::KeyCounter(QWidget* parent) : QWidget(parent)
 
 KeyCounter::~KeyCounter()
 {
-    std::string filename = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
+    std::string filename = getLogFolder() + utils::Timmer::getCurrentDate() + ".txt";
     writeLog(filename);
     removeKeyboardHook();
 }
@@ -71,6 +72,7 @@ void KeyCounter::initUi()
 {
     setWindowTitle("Keyboard Counter");
     setMinimumSize(800, 600);
+    setWindowFlags(Qt::Window);
 
     QGridLayout* main_lyt = new QGridLayout();
     ui_.bar_btn = new QPushButton();
@@ -109,7 +111,7 @@ void KeyCounter::initUi()
 
 void KeyCounter::loadData()
 {
-    std::string today_log = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
+    std::string today_log = getLogFolder() + utils::Timmer::getCurrentDate() + ".txt";
     std::ifstream log_file(today_log, std::ios::in);
     for (std::string each; std::getline(log_file, each);)
     {
@@ -203,7 +205,7 @@ void KeyCounter::startLog(int minutes)
     {
         minutes = 5;
     }
-    std::string filename = getLogFolder() + utils::Logger::getCurrentDate() + ".txt";
+    std::string filename = getLogFolder() + utils::Timmer::getCurrentDate() + ".txt";
     while (true)
     {
         std::this_thread::sleep_for(std::chrono::minutes(minutes));

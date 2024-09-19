@@ -5,15 +5,36 @@
 
 using namespace utils;
 
-std::string Logger::getCurrentDate()
+std::string Timmer::getCurrentDate()
 {
-    std::time_t current_time = std::time(nullptr);
-    std::tm* now_tm = std::localtime(&current_time);
+    auto today = std::chrono::system_clock::now();
+    return formatDate(today);
+}
 
-    char date_buffer[11];
-    std::strftime(date_buffer, sizeof(date_buffer), "%Y-%m-%d", now_tm);
+std::list<std::string> Timmer::getLastNDates(int n)
+{
+    std::list<std::string> dates;
 
-    return std::string(date_buffer);
+    auto today = std::chrono::system_clock::now();
+
+    for (int count = 0; count < n; ++count)
+    {
+        auto time_point = today - std::chrono::hours(24 * count);
+        dates.push_front(formatDate(time_point));
+    }
+
+    return dates;
+}
+
+std::string Timmer::formatDate(const std::chrono::system_clock::time_point& time_point)
+{
+    std::time_t time = std::chrono::system_clock::to_time_t(time_point);
+
+    // yyyy-mm-dd is sum of 10 characters, and + 1 the end character '\n'
+    char buffer[11];
+    std::strftime(buffer, sizeof(buffer), "%Y-%m-%d", std::localtime(&time));
+
+    return std::string(buffer);
 }
 
 bool Logger::log(const std::string& filename, const std::string& content, LogMethod method)

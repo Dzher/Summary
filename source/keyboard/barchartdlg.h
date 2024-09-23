@@ -7,6 +7,7 @@
 #include <QtCharts>
 #include <QtWidgets/QTabWidget>
 #include <QtWidgets/QWidget>
+#include <any>
 
 #include "keytype.h"
 
@@ -32,9 +33,11 @@ private:
     void initSystemChartSet();
     void initEditChartSet();
     void initOtherChartSet();
+
+    void initBarChart(const auto& data, const QString& title);
+
     void signalConnect();
 
-    // TODO: support previous date later
     void showBarChart(int index);
     void showAllChart();
     void showAlphaChart();

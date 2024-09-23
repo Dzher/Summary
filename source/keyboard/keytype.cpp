@@ -4,7 +4,7 @@ using namespace keyboard;
 
 KeyZone KeyboardUtils::vkCodeType(DWORD key_code)
 {
-    if (key_code >= 0x41 && key_code <= 0x5A)
+    if ((key_code >= 0x41 && key_code <= 0x5A) || (key_code >= 0x61 && key_code <= 0x7A))
     {
         return KeyZone::AlphaZone;
     }

@@ -1,4 +1,7 @@
 #include "mainpanel.h"
+#include <qaction.h>
+#include <qmenu.h>
+#include <qmenubar.h>
 #include <qmessagebox.h>
 
 #include <QtCore/QEvent>
@@ -13,7 +16,6 @@
 MainPanel::MainPanel(QWidget* parent) : QMainWindow(parent)
 {
     initUi();
-    initTrayIcon();
     if (!tools::ConfigHelper::existConfigFile())
     {
         tools::ConfigHelper::initConfigFile();
@@ -30,6 +32,35 @@ void MainPanel::initUi()
     setWindowIcon(QApplication::style()->standardIcon(QStyle::SP_ComputerIcon));
     setWindowTitle("Summary");
     setMinimumSize(480, 360);
+
+    initMenus();
+    initTrayIcon();
+}
+
+void MainPanel::initMenus()
+{
+    QMenuBar* menu_bar = new QMenuBar();
+
+    QMenu* file_menu = new QMenu("File");
+    QAction* quit_action = new QAction("Quit");
+    file_menu->addAction(quit_action);
+
+    QMenu* start_menu = new QMenu("Start");
+    QAction* keyboard_action = new QAction("KeyCounter");
+    start_menu->addAction(keyboard_action);
+
+    QMenu* setting_menu = new QMenu("Setting");
+    QAction* setting_edit_action = new QAction("Edit");
+    setting_menu->addAction(setting_edit_action);
+
+    menu_bar->addMenu(file_menu);
+    menu_bar->addMenu(start_menu);
+    menu_bar->addMenu(setting_menu);
+
+    this->setMenuBar(menu_bar);
+
+    connect(quit_action, &QAction::triggered, this, &MainPanel::close);
+    connect(keyboard_action, &QAction::triggered, this, &MainPanel::showKeyCounter);
 }
 
 void MainPanel::initTrayIcon()
@@ -42,7 +73,7 @@ void MainPanel::initTrayIcon()
     QAction* restore_action = new QAction("Restore");
     QAction* quit_action = new QAction("Quit");
     QMenu* statistics_menu = new QMenu("Statistics");
-    QAction* keyboard_action = new QAction("Keyboard");
+    QAction* keyboard_action = new QAction("KeyCounter");
     statistics_menu->addAction(keyboard_action);
 
     connect(restore_action, &QAction::triggered, this, &MainPanel::showNormal);

@@ -20,6 +20,7 @@ public:
 
 private:
     void initUi();
+    void initMenus();
     void initTrayIcon();
     void signalConnect();
     void showKeyCounter();
@@ -32,7 +33,6 @@ protected:
 private:
     struct
     {
-        QMenu* main_menu_ = nullptr;
         QSystemTrayIcon* tray_icon_ = nullptr;
         QMenu* tray_icon_menu_ = nullptr;
     } ui_;

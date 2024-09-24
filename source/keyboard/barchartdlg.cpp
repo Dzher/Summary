@@ -258,14 +258,132 @@ void KeyBarChartDlg::initNumericChartSet()
 
 void KeyBarChartDlg::initFuncChartSet()
 {
+    // init the data each time reopened
+    for (int func = 0x70; func <= 0x87; ++func)
+    {
+        auto key = KeyboardUtils::vkCode2String(func);
+        if (FuncBarData_[key])
+        {
+            delete FuncBarData_[key];
+        }
+        FuncBarData_[key] = new QBarSet(key);
+    }
+    maximize_ = 0;
+
+    std::vector<std::string> week_list = utils::Timmer::getLastNDates(kAWeek);
+    for (int day_index = 0; day_index < week_list.size(); ++day_index)
+    {
+        for (int func = 0x70; func <= 0x87; ++func)
+        {
+            // the date's data is empty, or no exist the date's file
+            auto key = KeyboardUtils::vkCode2String(func);
+            FuncBarData_[key]->append(0);
+        }
+
+        KeyboardData day_data = KeyCounter::getKeyData(week_list[day_index]);
+        for (auto it = day_data.begin(); it != day_data.end(); it++)
+        {
+            if (KeyboardUtils::vkCodeType(it.key()) != KeyZone::FuncZone)
+            {
+                continue;
+            }
+
+            auto key = KeyboardUtils::vkCode2String(it.key());
+            QBarSet* barset = FuncBarData_[key];
+            barset->replace(day_index, barset->at(day_index) + it.value());
+            if (maximize_ < barset->at(day_index))
+            {
+                maximize_ = barset->at(day_index);
+            }
+        }
+    }
 }
 
 void KeyBarChartDlg::initNavigationChartSet()
 {
+    // init the data each time reopened
+    for (int nav = 0x22; nav <= 0x28; ++nav)
+    {
+        auto key = KeyboardUtils::vkCode2String(nav, false);
+        qWarning() << key;
+        if (NavigationBarData_[key])
+        {
+            delete NavigationBarData_[key];
+        }
+        NavigationBarData_[key] = new QBarSet(key);
+    }
+    maximize_ = 0;
+
+    std::vector<std::string> week_list = utils::Timmer::getLastNDates(kAWeek);
+    for (int day_index = 0; day_index < week_list.size(); ++day_index)
+    {
+        for (int nav = 0x22; nav <= 0x28; ++nav)
+        {
+            // the date's data is empty, or no exist the date's file
+            auto key = KeyboardUtils::vkCode2String(nav);
+            NavigationBarData_[key]->append(0);
+        }
+
+        KeyboardData day_data = KeyCounter::getKeyData(week_list[day_index]);
+        for (auto it = day_data.begin(); it != day_data.end(); it++)
+        {
+            if (KeyboardUtils::vkCodeType(it.key()) != KeyZone::NavigationZone)
+            {
+                continue;
+            }
+
+            auto key = KeyboardUtils::vkCode2String(it.key());
+            QBarSet* barset = NavigationBarData_[key];
+            barset->replace(day_index, barset->at(day_index) + it.value());
+            if (maximize_ < barset->at(day_index))
+            {
+                maximize_ = barset->at(day_index);
+            }
+        }
+    }
 }
 
 void KeyBarChartDlg::initSymbolChartSet()
 {
+    // init the data each time reopened
+    for (int symb = 0x6A; symb <= 0x6F; ++symb)
+    {
+        auto key = KeyboardUtils::vkCode2String(symb);
+        if (SymbolBarData_[key])
+        {
+            delete SymbolBarData_[key];
+        }
+        SymbolBarData_[key] = new QBarSet(key);
+    }
+    maximize_ = 0;
+
+    std::vector<std::string> week_list = utils::Timmer::getLastNDates(kAWeek);
+    for (int day_index = 0; day_index < week_list.size(); ++day_index)
+    {
+        for (int symb = 0x6A; symb <= 0x6F; ++symb)
+        {
+            // the date's data is empty, or no exist the date's file
+            auto key = KeyboardUtils::vkCode2String(symb);
+            SymbolBarData_[key]->append(0);
+        }
+
+        KeyboardData day_data = KeyCounter::getKeyData(week_list[day_index]);
+        for (auto it = day_data.begin(); it != day_data.end(); it++)
+        {
+            if (KeyboardUtils::vkCodeType(it.key()) != KeyZone::SymbolZone)
+            {
+                continue;
+            }
+
+            auto key = KeyboardUtils::vkCode2String(it.key());
+            QBarSet* barset = SymbolBarData_[key];
+            barset->replace(day_index, barset->at(day_index) + it.value());
+            if (maximize_ < barset->at(day_index))
+            {
+                maximize_ = barset->at(day_index);
+            }
+        }
+    }
 }
 
 void KeyBarChartDlg::initControlChartSet()
@@ -274,6 +392,45 @@ void KeyBarChartDlg::initControlChartSet()
 
 void KeyBarChartDlg::initSystemChartSet()
 {
+    // init the data each time reopened
+    for (int sys = 0x5B; sys <= 0x5F; ++sys)
+    {
+        auto key = KeyboardUtils::vkCode2String(sys);
+        if (SystemBarData_[key])
+        {
+            delete SystemBarData_[key];
+        }
+        SystemBarData_[key] = new QBarSet(key);
+    }
+    maximize_ = 0;
+
+    std::vector<std::string> week_list = utils::Timmer::getLastNDates(kAWeek);
+    for (int day_index = 0; day_index < week_list.size(); ++day_index)
+    {
+        for (int sys = 0x5B; sys <= 0x5F; ++sys)
+        {
+            // the date's data is empty, or no exist the date's file
+            auto key = KeyboardUtils::vkCode2String(sys);
+            SystemBarData_[key]->append(0);
+        }
+
+        KeyboardData day_data = KeyCounter::getKeyData(week_list[day_index]);
+        for (auto it = day_data.begin(); it != day_data.end(); it++)
+        {
+            if (KeyboardUtils::vkCodeType(it.key()) != KeyZone::SystemZone)
+            {
+                continue;
+            }
+
+            auto key = KeyboardUtils::vkCode2String(it.key());
+            QBarSet* barset = SystemBarData_[key];
+            barset->replace(day_index, barset->at(day_index) + it.value());
+            if (maximize_ < barset->at(day_index))
+            {
+                maximize_ = barset->at(day_index);
+            }
+        }
+    }
 }
 
 void KeyBarChartDlg::initEditChartSet()
